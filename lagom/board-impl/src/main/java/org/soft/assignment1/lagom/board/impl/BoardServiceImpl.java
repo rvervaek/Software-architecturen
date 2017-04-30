@@ -6,13 +6,19 @@ import org.soft.assignment1.lagom.board.api.BoardService;
 import org.soft.assignment1.lagom.board.api.BoardStatus;
 
 import com.lightbend.lagom.javadsl.api.ServiceCall;
+import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 
 import akka.NotUsed;
 
 public class BoardServiceImpl implements BoardService {
 
-	
-	
+	private final PersistentEntityRegistry persistentEntityRegistry;
+
+	public BoardServiceImpl(PersistentEntityRegistry persistentEntityRegistry) {
+		this.persistentEntityRegistry = persistentEntityRegistry;
+		persistentEntityRegistry.register(BoardEntity.class);
+	}
+
 	@Override
 	public ServiceCall<Board, NotUsed> create() {
 		// TODO Auto-generated method stub
