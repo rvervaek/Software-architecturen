@@ -10,6 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
+    	<module>board-api</module>
+        <module>board-impl</module>
+        <module>task-api</module>
+        <module>task-impl</module>
         <module>hello-api</module>
         <module>hello-impl</module>
         <module>stream-api</module>

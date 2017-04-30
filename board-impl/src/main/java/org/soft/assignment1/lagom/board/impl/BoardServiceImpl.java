@@ -1,9 +1,9 @@
-package org.soft.assignment1.board_impl;
+package org.soft.assignment1.lagom.board.impl;
 
 import org.pcollections.PSequence;
-import org.soft.assignment1.board_api.BoardService;
-import org.soft.assignment1.board_api.request.Board;
-import org.soft.assignment1.board_api.request.BoardStatus;
+import org.soft.assignment1.lagom.board.api.Board;
+import org.soft.assignment1.lagom.board.api.BoardService;
+import org.soft.assignment1.lagom.board.api.BoardStatus;
 
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 

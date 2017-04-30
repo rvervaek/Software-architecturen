@@ -1,4 +1,4 @@
-package org.soft.assignment1.board_api.request;
+package org.soft.assignment1.lagom.board.api;
 
 import javax.annotation.concurrent.Immutable;
 

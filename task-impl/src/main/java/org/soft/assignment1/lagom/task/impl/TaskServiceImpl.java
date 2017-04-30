@@ -1,9 +1,9 @@
-package org.soft.assignment1.task_impl;
+package org.soft.assignment1.lagom.task.impl;
 
 import org.pcollections.PSequence;
-import org.soft.assignment1.task_api.TaskService;
-import org.soft.assignment1.task_api.request.Task;
-import org.soft.assignment1.task_api.request.TaskStatus;
+import org.soft.assignment1.lagom.task.api.Task;
+import org.soft.assignment1.lagom.task.api.TaskService;
+import org.soft.assignment1.lagom.task.api.TaskStatus;
 
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 

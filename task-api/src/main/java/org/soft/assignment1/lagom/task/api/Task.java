@@ -1,4 +1,4 @@
-package org.soft.assignment1.task_api.request;
+package org.soft.assignment1.lagom.task.api;
 
 import java.awt.Color;
 
