@@ -1,5 +1,7 @@
 package org.soft.assignment1.lagom.task.api;
 
+import java.util.UUID;
+
 import org.pcollections.PSequence;
 
 import com.lightbend.lagom.javadsl.api.Descriptor;
@@ -18,15 +20,15 @@ public interface TaskService extends Service {
 	 * Create a new task.
 	 * @return
 	 */
-	ServiceCall<Task, NotUsed> create(Long boardId);
+	ServiceCall<Task, NotUsed> create();
 	
-	ServiceCall<NotUsed, Task> get(String title, Long boardId);
+	ServiceCall<NotUsed, Task> get(UUID id);
 	
-	ServiceCall<Task, NotUsed> update(String title, Long boardId);
+	ServiceCall<Task, NotUsed> update(UUID id);
 	
-	ServiceCall<TaskStatus, NotUsed> updateStatus(String title, Long boardId);
+	ServiceCall<TaskStatus, NotUsed> updateStatus(UUID id);
 	
-	ServiceCall<NotUsed, PSequence<Task>> getByBoardId(Long boardId);
+	ServiceCall<NotUsed, PSequence<Task>> getByBoardId(String boardId);
 	
 	/*
 	 * (non-Javadoc)
@@ -36,10 +38,10 @@ public interface TaskService extends Service {
 	default Descriptor descriptor() {
 		return Service.named(SERVICE_NAME)
 				.withCalls(
-						Service.restCall(Method.POST, SERVICE_URI + "board/:boardId", this::create),
-						Service.restCall(Method.GET, SERVICE_URI + ":title/board/:boardId", this::get),
-						Service.restCall(Method.PUT, SERVICE_URI + ":title/board/:boardId", this::update),
-						Service.restCall(Method.PUT, SERVICE_URI + ":title/board/:boardId", this::updateStatus),
+						Service.restCall(Method.POST, SERVICE_URI, this::create),
+						Service.restCall(Method.GET, SERVICE_URI + ":id", this::get),
+						Service.restCall(Method.PUT, SERVICE_URI + ":id", this::update),
+						Service.restCall(Method.PUT, SERVICE_URI + "status/:id", this::updateStatus),
 						Service.restCall(Method.GET, SERVICE_URI + "board/:boardId", this::getByBoardId))
 				.withAutoAcl(true);
 	}
