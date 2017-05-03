@@ -36,6 +36,24 @@ public interface PBoardEvent extends Jsonable, AggregateEvent<PBoardEvent> {
 	@SuppressWarnings("serial")
 	@Immutable
 	@JsonDeserialize
+	public class Activated implements PBoardEvent {
+
+		private final PBoardStatus status;
+
+		@JsonCreator
+		public Activated(PBoardStatus status) {
+			assert status == PBoardStatus.CREATED;
+			this.status = status;
+		}
+
+		public PBoardStatus getStatus() {
+			return status;
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	@Immutable
+	@JsonDeserialize
 	public class Updated implements PBoardEvent {
 
 		private final String title;
@@ -60,7 +78,7 @@ public interface PBoardEvent extends Jsonable, AggregateEvent<PBoardEvent> {
 		@JsonCreator
 		public Archived(PBoardStatus status) {
 			assert status == PBoardStatus.ARCHIVED;
-			this.status = Preconditions.checkNotNull(status, "status");
+			this.status = status;
 		}
 
 		public PBoardStatus getStatus() {

@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 @JsonSerialize
 public class Board {
 
-	public final String title;
-	public final BoardStatus status;	
+	private final String title;
+	private final BoardStatus status;	
 	
 	@JsonCreator
 	public Board(String title, String status) {
@@ -24,4 +24,11 @@ public class Board {
 		this.status = Preconditions.checkNotNull(status);
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public BoardStatus getStatus() {
+		return status;
+	}
 }

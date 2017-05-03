@@ -12,6 +12,6 @@ public final class Mappers {
 
 	public static PBoard fromApi(Board data) {
 		return new PBoard(
-				data.title);
+				data.getTitle());
 	}
 }

@@ -11,12 +11,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize
 public class Task {
 
-	public final UUID id;
-	public final String title;
-	public final String details;
-	public final TaskColor color;
-	public final TaskStatus status;
-	public final String boardId;
+	private final UUID id;
+	private final String title;
+	private final String details;
+	private final TaskColor color;
+	private final TaskStatus status;
+	private final String boardId;
 	
 	@JsonCreator
 	public Task(UUID id, String title, String details, TaskColor color, TaskStatus status, String boardId) {
@@ -32,9 +32,9 @@ public class Task {
 	@JsonSerialize
 	public static final class TaskColor {
 		
-		public final int red;
-		public final int green;
-		public final int blue;
+		private final int red;
+		private final int green;
+		private final int blue;
 		
 		@JsonCreator
 		public TaskColor(int red, int green, int blue) {
@@ -43,37 +43,40 @@ public class Task {
 			this.blue = blue;
 		}
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + blue;
-			result = prime * result + green;
-			result = prime * result + red;
-			return result;
+		public int getRed() {
+			return red;
 		}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			TaskColor other = (TaskColor) obj;
-			if (blue != other.blue)
-				return false;
-			if (green != other.green)
-				return false;
-			if (red != other.red)
-				return false;
-			return true;
+		public int getGreen() {
+			return green;
 		}
 
-		@Override
-		public String toString() {
-			return "TaskColor [red=" + red + ", green=" + green + ", blue=" + blue + "]";
+		public int getBlue() {
+			return blue;
 		}
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getDetails() {
+		return details;
+	}
+
+	public TaskColor getColor() {
+		return color;
+	}
+
+	public TaskStatus getStatus() {
+		return status;
+	}
+
+	public String getBoardId() {
+		return boardId;
 	}
 }

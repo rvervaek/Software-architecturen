@@ -111,24 +111,32 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 			// Emit the appropriate event for the new status
 			switch (cmd.getStatus()) {
 			case CREATED:
-				return ctx.thenPersist(new PBoardEvent.Created(cmd.getStatus()),
+				/*
+				 * Since the requirements don't clearly say whether or not it is
+				 * allowed for a board to become 'unarchived' (active) again, we allow
+				 * this functionality via changing the board status back to
+				 * CREATED and emitting an ACTIVATED event containing the new
+				 * status.
+				 */
+				return ctx.thenPersist(new PBoardEvent.Activated(cmd.getStatus()),
 						evt -> state().updateStatus(evt.getStatus()));
 			default:
 				ctx.commandFailed(new InvalidCommandException("Unexpected update status " + cmd.getStatus()));
 				return ctx.done();
 			}
 		});
-
-        // Ignore these commands, they may come due to at least once messaging
-        builder.setReadOnlyCommandHandler(UpdatePrice.class, this::alreadyDone);
-        builder.setReadOnlyCommandHandler(FinishAuction.class, this::alreadyDone);
+		/*
+		 * This event handler brings the current behavior back to the 'create'
+		 * behavior, since the behavior is the same when a board becomes
+		 * 'active' again after being archived.
+		 */
+		builder.setEventHandlerChangingBehavior(PBoardEvent.Activated.class,
+				evt -> created(state().updateStatus(evt.getStatus())));
 
         return builder.build();
 	}
 
 
-
-	
 //	BehaviorBuilder b = newBehaviorBuilder(snapshotState.orElse(new PBoardState(Optional.empty())));
 //	
 //	/*

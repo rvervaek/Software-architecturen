@@ -7,12 +7,17 @@ import java.util.stream.Collectors;
 
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
+import org.soft.assignment1.lagom.board.api.Board;
+import org.soft.assignment1.lagom.board.api.BoardService;
+import org.soft.assignment1.lagom.board.api.BoardStatus;
 import org.soft.assignment1.lagom.task.api.Task;
 import org.soft.assignment1.lagom.task.api.TaskService;
 import org.soft.assignment1.lagom.task.api.TaskStatus;
 
 import com.datastax.driver.core.utils.UUIDs;
+import com.google.inject.Inject;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
+import com.lightbend.lagom.javadsl.api.transport.NotFound;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
@@ -20,23 +25,40 @@ import akka.NotUsed;
 
 public class TaskServiceImpl implements TaskService {
 
+	private final BoardService boardService;
+	
 	private final PersistentEntityRegistry persistentEntityRegistry;
 	private final CassandraSession database;
 	
-	public TaskServiceImpl(PersistentEntityRegistry persistentEntityRegistry, CassandraSession database) {
+	@Inject
+	public TaskServiceImpl(PersistentEntityRegistry persistentEntityRegistry, CassandraSession database, BoardService boardService) {
 		this.persistentEntityRegistry = persistentEntityRegistry;
 		this.database = database;
-		persistentEntityRegistry.register(TaskEntity.class);
+		this.boardService = boardService;
+		persistentEntityRegistry.register(PTaskEntity.class);
 	}
 
 	@Override
 	public ServiceCall<Task, NotUsed> create() {
 		return task -> {
-			UUID itemId = UUIDs.timeBased();
+			
+			/* Request the board linked to the task */
+			CompletionStage<Board> response = boardService.get(task.getBoardId()).invoke();
+			/* Throw an exception when the board was not found */
+			response.exceptionally(t -> {
+				throw new NotFound(t);
+			});
+			/* Block until the board was retrieved */
+			Board board = response.toCompletableFuture().join();					
+			/* Throw an exception when the board was already ARCHIVED */
+			if (board.getStatus() == BoardStatus.ARCHIVED) {
+				throw new IllegalStateException("Board " + task.getBoardId() + " was already archived");
+			}
+			/* Persist the new task */
 			return persistentEntityRegistry
-				.refFor(TaskEntity.class, itemId.toString())
-				.ask(new TaskCommand.Create(new Task(itemId, task.title, task.details, task.color, task.status, task.boardId)))
-				.thenApply(ack -> NotUsed.getInstance());	
+					.refFor(PTaskEntity.class, UUIDs.timeBased().toString())
+					.ask(new PTaskCommand.Create(Mappers.fromApi(task)))
+					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}
 
@@ -44,8 +66,8 @@ public class TaskServiceImpl implements TaskService {
 	public ServiceCall<NotUsed, Task> get(UUID id) {
 		return request -> {
 			return persistentEntityRegistry
-					.refFor(TaskEntity.class, id.toString())
-					.ask(new TaskCommand.Get(id));
+					.refFor(PTaskEntity.class, id.toString())
+					.ask(new PTaskCommand.Get(id));
 		};
 	}
 
@@ -53,8 +75,8 @@ public class TaskServiceImpl implements TaskService {
 	public ServiceCall<Task, NotUsed> update(UUID id) {
 		return task -> {
 			return persistentEntityRegistry
-					.refFor(TaskEntity.class, id.toString())
-					.ask(new TaskCommand.Update(task))
+					.refFor(PTaskEntity.class, id.toString())
+					.ask(new PTaskCommand.Update(Mappers.fromApi(task)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}
@@ -63,8 +85,8 @@ public class TaskServiceImpl implements TaskService {
 	public ServiceCall<TaskStatus, NotUsed> updateStatus(UUID id) {
 		return status -> {
 			return persistentEntityRegistry
-					.refFor(TaskEntity.class, id.toString())
-					.ask(new TaskCommand.UpdateStatus(status))
+					.refFor(PTaskEntity.class, id.toString())
+					.ask(new PTaskCommand.UpdateStatus(PTaskStatus.get(status)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}

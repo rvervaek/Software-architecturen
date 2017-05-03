@@ -35,6 +35,13 @@ public interface BoardService extends Service {
 	ServiceCall<BoardStatus, NotUsed> updateStatus(String title);
 	
 	/**
+	 * Get a board by its title.
+	 * @param title
+	 * @return
+	 */
+	ServiceCall<NotUsed, Board> get(String title);
+	
+	/**
 	 * Get all boards.
 	 * @return
 	 */
@@ -51,6 +58,7 @@ public interface BoardService extends Service {
 						Service.restCall(Method.POST, SERVICE_URI, this::create),
 						Service.restCall(Method.PUT, SERVICE_URI + ":title", this::update),
 						Service.restCall(Method.PUT, SERVICE_URI + ":title/status", this::updateStatus),
+						Service.restCall(Method.GET, SERVICE_URI + ":title", this::get),
 						Service.restCall(Method.GET, SERVICE_URI, this::getAll))
 				.withAutoAcl(true);
 	}

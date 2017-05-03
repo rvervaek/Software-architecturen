@@ -1,7 +1,7 @@
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -18,6 +18,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>task-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>board-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -70,6 +75,15 @@
 				<artifactId>lagom-maven-plugin</artifactId>
 				<configuration>
 					<lagomService>true</lagomService>
+<!-- 					<externalProjects> -->
+<!-- 			            <externalProject> -->
+<!-- 			                <artifact> -->
+<!-- 			                    <groupId>org.soft.assignment1</groupId> -->
+<!-- 			                    <artifactId>board-impl</artifactId> -->
+<!-- 			                    <version>${project.version}</version> -->
+<!-- 			                </artifact> -->
+<!-- 			            </externalProject> -->
+<!-- 			        </externalProjects> -->
 				</configuration>
 				<executions>
 					<execution>
