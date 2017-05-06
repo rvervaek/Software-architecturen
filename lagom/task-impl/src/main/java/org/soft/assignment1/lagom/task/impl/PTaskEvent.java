@@ -1,5 +1,7 @@
 package org.soft.assignment1.lagom.task.impl;
 
+import java.util.UUID;
+
 import javax.annotation.concurrent.Immutable;
 
 import org.soft.assignment1.lagom.task.impl.PTask.PTaskColor;
@@ -15,7 +17,7 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 
 	@Override
 	default public AggregateEventTagger<PTaskEvent> aggregateTag() {
-		return TaskEventTag.INSTANCE;
+		return PTaskEventTag.INSTANCE;
 	}
 
 	@SuppressWarnings("serial")
@@ -40,16 +42,23 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 	@JsonDeserialize
 	public class Backlogged implements PTaskEvent {
 
-		public final PTaskStatus status;
+		private final UUID id;
+		
+		private final PTaskStatus status;
 
 		@JsonCreator
-		public Backlogged(PTaskStatus status) {
+		public Backlogged(UUID id, PTaskStatus status) {
 			assert status == PTaskStatus.BACKLOG;
+			this.id = id;
 			this.status = status;
 		}
 
 		public PTaskStatus getStatus() {
 			return status;
+		}
+
+		public UUID getId() {
+			return id;
 		}
 	}
 	
@@ -58,12 +67,15 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 	@JsonDeserialize
 	public class Updated implements PTaskEvent {
 
+		private final UUID id;
+		
 		private final String title;
 		private final String details;
 		private final PTaskColor color;
 
 		@JsonCreator
-		public Updated(String title, String details, PTaskColor color) {
+		public Updated(UUID id, String title, String details, PTaskColor color) {
+			this.id = id;
 			this.title = title;
 			this.details = details;
 			this.color = color;
@@ -80,6 +92,10 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 		public PTaskColor getColor() {
 			return color;
 		}
+		
+		public UUID getId() {
+			return id;
+		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -87,16 +103,23 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 	@JsonDeserialize
 	public class Scheduled implements PTaskEvent {
 
-		public final PTaskStatus status;
+		private final UUID id;
+		
+		private final PTaskStatus status;
 
 		@JsonCreator
-		public Scheduled(PTaskStatus status) {
+		public Scheduled(UUID id, PTaskStatus status) {
 			assert status == PTaskStatus.SCHEDULED;
+			this.id = id;
 			this.status = status;
 		}
 
 		public PTaskStatus getStatus() {
 			return status;
+		}
+		
+		public UUID getId() {
+			return id;
 		}
 	}
 	
@@ -105,16 +128,23 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 	@JsonDeserialize
 	public class Started implements PTaskEvent {
 
-		public final PTaskStatus status;
+		private final UUID id;
+		
+		private final PTaskStatus status;
 
 		@JsonCreator
-		public Started(PTaskStatus status) {
+		public Started(UUID id, PTaskStatus status) {
 			assert status == PTaskStatus.STARTED;
+			this.id = id;
 			this.status = status;
 		}
 
 		public PTaskStatus getStatus() {
 			return status;
+		}
+		
+		public UUID getId() {
+			return id;
 		}
 	}
 	
@@ -123,16 +153,23 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 	@JsonDeserialize
 	public class Completed implements PTaskEvent {
 
-		public final PTaskStatus status;
+		private final UUID id;
+		
+		private final PTaskStatus status;
 
 		@JsonCreator
-		public Completed(PTaskStatus status) {
+		public Completed(UUID id, PTaskStatus status) {
 			assert status == PTaskStatus.COMPLETED;
+			this.id = id;
 			this.status = status;
 		}
 
 		public PTaskStatus getStatus() {
 			return status;
+		}
+		
+		public UUID getId() {
+			return id;
 		}
 	}
 	
@@ -141,16 +178,23 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 	@JsonDeserialize
 	public class Archived implements PTaskEvent {
 
-		public final PTaskStatus status;
+		private final UUID id;
+		
+		private final PTaskStatus status;
 
 		@JsonCreator
-		public Archived(PTaskStatus status) {
+		public Archived(UUID id, PTaskStatus status) {
 			assert status == PTaskStatus.ARCHIVED;
+			this.id = id;
 			this.status = status;
 		}
 
 		public PTaskStatus getStatus() {
 			return status;
+		}
+		
+		public UUID getId() {
+			return id;
 		}
 	}
 }

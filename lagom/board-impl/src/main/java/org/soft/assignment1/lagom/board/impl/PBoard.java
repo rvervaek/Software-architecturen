@@ -1,36 +1,42 @@
 package org.soft.assignment1.lagom.board.impl;
 
+import java.util.UUID;
+
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Preconditions;
 
 @Immutable
-@JsonSerialize
 public class PBoard {
 
+	private final UUID id;
 	private final String title;
 	private final PBoardStatus status;	
 
-	@JsonCreator
-	public PBoard(String title) {
-		this(title, PBoardStatus.CREATED);
+	public PBoard(UUID id, String title) {
+		this(id, title, PBoardStatus.CREATED);
 	}
 	
-	@JsonCreator
-	public PBoard(String title, PBoardStatus status) {
+	public PBoard(UUID id, String title, PBoardStatus status) {
+		this.id = Preconditions.checkNotNull(id);
 		this.title = Preconditions.checkNotNull(title);
 		this.status = Preconditions.checkNotNull(status);
 	}
 
-	public PBoard updateTitle(String title) {
+	public PBoard updateTitle(UUID id, String title) {
 		assert status == PBoardStatus.CREATED;
-		return new PBoard(title, status);
+		return new PBoard(id, title, status);
 	}
 
-	public PBoard updateStatus(PBoardStatus status) {
-		return new PBoard(title, status);
+	public PBoard updateStatus(UUID id, PBoardStatus status) {
+		return new PBoard(id, title, status);
+	}
+
+	public UUID getId() {
+		return id;
 	}
 
 	public String getTitle() {

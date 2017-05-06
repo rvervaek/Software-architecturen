@@ -1,5 +1,7 @@
 package org.soft.assignment1.lagom.board.impl;
 
+import java.util.UUID;
+
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,7 +15,7 @@ public interface PBoardEvent extends Jsonable, AggregateEvent<PBoardEvent> {
 
 	@Override
 	default public AggregateEventTagger<PBoardEvent> aggregateTag() {
-		return BoardEventTag.INSTANCE;
+		return PBoardEventTag.INSTANCE;
 	}
 
 	@SuppressWarnings("serial")
@@ -38,16 +40,23 @@ public interface PBoardEvent extends Jsonable, AggregateEvent<PBoardEvent> {
 	@JsonDeserialize
 	public class Activated implements PBoardEvent {
 
+		private final UUID id;
+		
 		private final PBoardStatus status;
 
 		@JsonCreator
-		public Activated(PBoardStatus status) {
+		public Activated(UUID id, PBoardStatus status) {
 			assert status == PBoardStatus.CREATED;
+			this.id = id;
 			this.status = status;
 		}
 
 		public PBoardStatus getStatus() {
 			return status;
+		}
+
+		public UUID getId() {
+			return id;
 		}
 	}
 	
@@ -56,15 +65,22 @@ public interface PBoardEvent extends Jsonable, AggregateEvent<PBoardEvent> {
 	@JsonDeserialize
 	public class Updated implements PBoardEvent {
 
+		private final UUID id;
+		
 		private final String title;
 
 		@JsonCreator
-		public Updated(String title) {
+		public Updated(UUID id, String title) {
+			this.id = id;
 			this.title = Preconditions.checkNotNull(title, "title");
 		}
 
 		public String getTitle() {
 			return title;
+		}
+		
+		public UUID getId() {
+			return id;
 		}
 	}
 	
@@ -73,16 +89,23 @@ public interface PBoardEvent extends Jsonable, AggregateEvent<PBoardEvent> {
 	@JsonDeserialize
 	public class Archived implements PBoardEvent {
 
+		private final UUID id;
+		
 		private final PBoardStatus status;
 
 		@JsonCreator
-		public Archived(PBoardStatus status) {
+		public Archived(UUID id, PBoardStatus status) {
 			assert status == PBoardStatus.ARCHIVED;
+			this.id = id;
 			this.status = status;
 		}
 
 		public PBoardStatus getStatus() {
 			return status;
+		}
+		
+		public UUID getId() {
+			return id;
 		}
 	}
 }

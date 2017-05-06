@@ -5,10 +5,12 @@ import java.util.UUID;
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Immutable
 @JsonSerialize
+@JsonDeserialize
 public class Task {
 
 	private final UUID id;
@@ -16,10 +18,10 @@ public class Task {
 	private final String details;
 	private final TaskColor color;
 	private final TaskStatus status;
-	private final String boardId;
+	private final UUID boardId;
 	
 	@JsonCreator
-	public Task(UUID id, String title, String details, TaskColor color, TaskStatus status, String boardId) {
+	public Task(UUID id, String title, String details, TaskColor color, TaskStatus status, UUID boardId) {
 		this.id = id;
 		this.title = title;
 		this.details = details;
@@ -30,6 +32,7 @@ public class Task {
 	
 	@Immutable
 	@JsonSerialize
+	@JsonDeserialize
 	public static final class TaskColor {
 		
 		private final int red;
@@ -54,6 +57,39 @@ public class Task {
 		public int getBlue() {
 			return blue;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + blue;
+			result = prime * result + green;
+			result = prime * result + red;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			TaskColor other = (TaskColor) obj;
+			if (blue != other.blue)
+				return false;
+			if (green != other.green)
+				return false;
+			if (red != other.red)
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "TaskColor [red=" + red + ", green=" + green + ", blue=" + blue + "]";
+		}
 	}
 
 	public UUID getId() {
@@ -76,7 +112,37 @@ public class Task {
 		return status;
 	}
 
-	public String getBoardId() {
+	public UUID getBoardId() {
 		return boardId;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((boardId == null) ? 0 : boardId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Task other = (Task) obj;
+		if (boardId == null) {
+			if (other.boardId != null)
+				return false;
+		} else if (!boardId.equals(other.boardId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Task [title=" + title + "]";
 	}
 }

@@ -1,6 +1,7 @@
 package org.soft.assignment1.lagom.board.impl;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 import javax.annotation.concurrent.Immutable;
@@ -29,12 +30,12 @@ public final class PBoardState implements Jsonable {
         return new PBoardState(Optional.of(board));
     }
 
-    public PBoardState updateTitle(String title) {
-        return update(i -> i.updateTitle(title));
+    public PBoardState updateTitle(UUID id, String title) {
+        return update(i -> i.updateTitle(id, title));
     }
 
-    public PBoardState updateStatus(PBoardStatus status) {
-        return update(i -> i.updateStatus(status));
+    public PBoardState updateStatus(UUID id, PBoardStatus status) {
+        return update(i -> i.updateStatus(id, status));
     }
     
     public Optional<PBoard> getBoard() {

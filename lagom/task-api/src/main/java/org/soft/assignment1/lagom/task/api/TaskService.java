@@ -7,6 +7,7 @@ import org.pcollections.PSequence;
 import com.lightbend.lagom.javadsl.api.Descriptor;
 import com.lightbend.lagom.javadsl.api.Service;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
+import com.lightbend.lagom.javadsl.api.deser.PathParamSerializers;
 import com.lightbend.lagom.javadsl.api.transport.Method;
 
 import akka.NotUsed;
@@ -28,7 +29,7 @@ public interface TaskService extends Service {
 	
 	ServiceCall<TaskStatus, NotUsed> updateStatus(UUID id);
 	
-	ServiceCall<NotUsed, PSequence<Task>> getByBoardId(String boardId);
+	ServiceCall<NotUsed, PSequence<Task>> getByBoardId(UUID boardId);
 	
 	/*
 	 * (non-Javadoc)
@@ -43,6 +44,7 @@ public interface TaskService extends Service {
 						Service.restCall(Method.PUT, SERVICE_URI + ":id", this::update),
 						Service.restCall(Method.PUT, SERVICE_URI + "status/:id", this::updateStatus),
 						Service.restCall(Method.GET, SERVICE_URI + "board/:boardId", this::getByBoardId))
-				.withAutoAcl(true);
+				.withAutoAcl(true)
+				.withPathParamSerializer(UUID.class, PathParamSerializers.UUID);
 	}
 }

@@ -61,9 +61,9 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 			if (board.getTitle().equals(cmd.getTitle())) {
 				return ctx.done();
 			}
-			return ctx.thenPersist(new PBoardEvent.Updated(cmd.getTitle()), reply -> ctx.reply(Done.getInstance()));
+			return ctx.thenPersist(new PBoardEvent.Updated(cmd.getId(), cmd.getTitle()), reply -> ctx.reply(Done.getInstance()));
 		});
-		builder.setEventHandler(PBoardEvent.Updated.class, evt -> state().updateTitle(evt.getTitle()));
+		builder.setEventHandler(PBoardEvent.Updated.class, evt -> state().updateTitle(evt.getId(), evt.getTitle()));
 
 		/* UPDATESTATUS */
 		builder.setCommandHandler(PBoardCommand.UpdateStatus.class, (cmd, ctx) -> {
@@ -75,8 +75,8 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 			// Emit the appropriate event for the new status
 			switch (cmd.getStatus()) {
 			case ARCHIVED:
-				return ctx.thenPersist(new PBoardEvent.Archived(cmd.getStatus()),
-						evt -> state().updateStatus(evt.getStatus()));
+				return ctx.thenPersist(new PBoardEvent.Archived(cmd.getId(), cmd.getStatus()),
+						evt -> state().updateStatus(evt.getId(), evt.getStatus()));
 			default:
 				ctx.commandFailed(new InvalidCommandException("Unexpected update status " + cmd.getStatus()));
 				return ctx.done();
@@ -84,7 +84,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 		});
 		// Updating the board status to ARCHIVED changes the current behavior
 		builder.setEventHandlerChangingBehavior(PBoardEvent.Archived.class,
-				evt -> archived(state().updateStatus(evt.getStatus())));
+				evt -> archived(state().updateStatus(evt.getId(), evt.getStatus())));
 
         return builder.build();
 	}
@@ -118,8 +118,8 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 				 * CREATED and emitting an ACTIVATED event containing the new
 				 * status.
 				 */
-				return ctx.thenPersist(new PBoardEvent.Activated(cmd.getStatus()),
-						evt -> state().updateStatus(evt.getStatus()));
+				return ctx.thenPersist(new PBoardEvent.Activated(cmd.getId(), cmd.getStatus()),
+						evt -> state().updateStatus(evt.getId(), evt.getStatus()));
 			default:
 				ctx.commandFailed(new InvalidCommandException("Unexpected update status " + cmd.getStatus()));
 				return ctx.done();
@@ -131,7 +131,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 		 * 'active' again after being archived.
 		 */
 		builder.setEventHandlerChangingBehavior(PBoardEvent.Activated.class,
-				evt -> created(state().updateStatus(evt.getStatus())));
+				evt -> created(state().updateStatus(evt.getId(), evt.getStatus())));
 
         return builder.build();
 	}

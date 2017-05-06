@@ -1,10 +1,9 @@
 package org.soft.assignment1.lagom.board.impl;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
 
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
@@ -12,9 +11,11 @@ import org.soft.assignment1.lagom.board.api.Board;
 import org.soft.assignment1.lagom.board.api.BoardService;
 import org.soft.assignment1.lagom.board.api.BoardStatus;
 
+import com.datastax.driver.core.utils.UUIDs;
+import com.google.inject.Inject;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
-import com.lightbend.lagom.javadsl.api.transport.NotFound;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
+import com.lightbend.lagom.javadsl.persistence.ReadSide;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import akka.NotUsed;
@@ -25,63 +26,59 @@ public class BoardServiceImpl implements BoardService {
 	private final CassandraSession database;
 
 	@Inject
-	public BoardServiceImpl(PersistentEntityRegistry persistentEntityRegistry, CassandraSession database) {
+	public BoardServiceImpl(PersistentEntityRegistry persistentEntityRegistry, ReadSide readSide, CassandraSession database) {
 		this.persistentEntityRegistry = persistentEntityRegistry;
 		this.database = database;
 		persistentEntityRegistry.register(PBoardEntity.class);
+		readSide.register(PBoardEventProcessor.class);
+		
 	}
 
 	@Override
 	public ServiceCall<Board, NotUsed> create() {
-		return board -> {
+		return board -> {	
 			return persistentEntityRegistry
-					.refFor(PBoardEntity.class, board.getTitle())
+					.refFor(PBoardEntity.class, UUIDs.timeBased().toString())
 					.ask(new PBoardCommand.Create(Mappers.fromApi(board)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}
 
 	@Override
-	public ServiceCall<Board, NotUsed> update(String title) {
+	public ServiceCall<Board, NotUsed> update(UUID id) {
 		return board -> {
 			return persistentEntityRegistry
-					.refFor(PBoardEntity.class, board.getTitle())
-					.ask(new PBoardCommand.Update(board.getTitle()))
+					.refFor(PBoardEntity.class, id.toString())
+					.ask(new PBoardCommand.Update(id, board.getTitle()))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}
 
 	@Override
-	public ServiceCall<BoardStatus, NotUsed> updateStatus(String title) {
+	public ServiceCall<BoardStatus, NotUsed> updateStatus(UUID id) {
 		return status -> {
-			return persistentEntityRegistry.refFor(PBoardEntity.class, title)
-					.ask(new PBoardCommand.UpdateStatus(PBoardStatus.get(status)))
+			return persistentEntityRegistry.refFor(PBoardEntity.class, id.toString())
+					.ask(new PBoardCommand.UpdateStatus(id, PBoardStatus.get(status)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}
 
 	@Override
-	public ServiceCall<NotUsed, Board> get(String title) {
+	public ServiceCall<NotUsed, Board> get(UUID id) {
 		return request -> {
-			CompletionStage<Board> result = database.selectOne("SELECT * FROM board where title = ?", title)
-					.thenApply(row -> {
-						if (row.isPresent()) {
-							return new Board(row.get().getString("title"), row.get().getString("status"));
-						} else {
-							throw new NotFound("Board with title " + title + " not found");
-						}
-					});
-			return result;
+			return persistentEntityRegistry.refFor(PBoardEntity.class, id.toString())
+					.ask(new PBoardCommand.Get(id))
+					.thenApply(resp -> resp);
 		};
 	}
 
 	@Override
 	public ServiceCall<NotUsed, PSequence<Board>> getAll() {
 		return request -> {
-			CompletionStage<PSequence<Board>> result = database.selectAll("SELECT * FROM board").thenApply(rows -> {
+			CompletionStage<PSequence<Board>> result = database.selectAll("SELECT boardId, title, status FROM board").thenApply(rows -> {
 				List<Board> boards = rows
 						.stream()
-						.map(row -> new Board(row.getString("title"), row.getString("status")))
+						.map(row -> new Board(row.getUUID("boardId"), row.getString("title"), row.getString("status")))
 						// I could have filtered this in the query, but I'm trying to use as much lambda functions as I can to learn.
 						.filter(board -> board.getStatus() != BoardStatus.ARCHIVED)
 						.collect(Collectors.toList());

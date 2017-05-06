@@ -55,12 +55,15 @@ public interface PTaskCommand extends Jsonable {
 	@JsonDeserialize
 	public final class Update implements PTaskCommand, PersistentEntity.ReplyType<Done> {
 
+		private final UUID id;
+		
 		private final String title;
 		private final String details;
 		private final PTaskColor color;
 		
 		@JsonCreator
-		public Update(PTask task) {
+		public Update(UUID id, PTask task) {
+			this.id = id;
 			this.title = task.getTitle();
 			this.details = task.getDetails();
 			this.color = task.getColor();
@@ -77,6 +80,10 @@ public interface PTaskCommand extends Jsonable {
 		public PTaskColor getColor() {
 			return color;
 		}
+		
+		public UUID getId() {
+			return id;
+		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -84,15 +91,22 @@ public interface PTaskCommand extends Jsonable {
 	@JsonDeserialize
 	public final class UpdateStatus implements PTaskCommand, PersistentEntity.ReplyType<Done> {
 
+		private final UUID id;
+		
 		public final PTaskStatus status;
 		
 		@JsonCreator
-		public UpdateStatus(PTaskStatus status) {
+		public UpdateStatus(UUID id, PTaskStatus status) {
+			this.id = id;
 			this.status = status;
 		}
 
 		public PTaskStatus getStatus() {
 			return status;
+		}
+		
+		public UUID getId() {
+			return id;
 		}
 	}
 }

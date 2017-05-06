@@ -1,10 +1,13 @@
 package org.soft.assignment1.lagom.board.api;
 
+import java.util.UUID;
+
 import org.pcollections.PSequence;
 
 import com.lightbend.lagom.javadsl.api.Descriptor;
 import com.lightbend.lagom.javadsl.api.Service;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
+import com.lightbend.lagom.javadsl.api.deser.PathParamSerializers;
 import com.lightbend.lagom.javadsl.api.transport.Method;
 
 import akka.NotUsed;
@@ -25,21 +28,21 @@ public interface BoardService extends Service {
 	 * @param title The title of the board to update
 	 * @return
 	 */
-	ServiceCall<Board, NotUsed> update(String title);
+	ServiceCall<Board, NotUsed> update(UUID id);
 	
 	/**
 	 * Update the status of a board.
 	 * @param title The title of the board to update
 	 * @returns
 	 */
-	ServiceCall<BoardStatus, NotUsed> updateStatus(String title);
+	ServiceCall<BoardStatus, NotUsed> updateStatus(UUID id);
 	
 	/**
 	 * Get a board by its title.
 	 * @param title
 	 * @return
 	 */
-	ServiceCall<NotUsed, Board> get(String title);
+	ServiceCall<NotUsed, Board> get(UUID id);
 	
 	/**
 	 * Get all boards.
@@ -60,6 +63,7 @@ public interface BoardService extends Service {
 						Service.restCall(Method.PUT, SERVICE_URI + ":title/status", this::updateStatus),
 						Service.restCall(Method.GET, SERVICE_URI + ":title", this::get),
 						Service.restCall(Method.GET, SERVICE_URI, this::getAll))
-				.withAutoAcl(true);
+				.withAutoAcl(true)
+				.withPathParamSerializer(UUID.class, PathParamSerializers.UUID);
 	}
 }

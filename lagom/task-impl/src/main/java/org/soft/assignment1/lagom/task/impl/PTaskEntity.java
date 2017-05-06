@@ -76,7 +76,7 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 					&& task.getColor().equals(cmd.getColor())) {
 				return ctx.done();
 			}
-			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
+			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getId(), cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
 					evt -> ctx.reply(Done.getInstance()));
 		});
 		builder.setEventHandler(PTaskEvent.Updated.class,
@@ -92,13 +92,13 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 			// Emit the appropriate event for the new status
 			switch (cmd.getStatus()) {
 			case SCHEDULED:
-				return ctx.thenPersist(new PTaskEvent.Scheduled(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Scheduled(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(evt.getStatus()));
 			case STARTED:
-				return ctx.thenPersist(new PTaskEvent.Started(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Started(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
 			case COMPLETED:
-				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
 //			case ARCHIVED:
 //				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getStatus()),
@@ -141,7 +141,7 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 					&& task.getColor().equals(cmd.getColor())) {
 				return ctx.done();
 			}
-			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
+			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getId(), cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
 					evt -> ctx.reply(Done.getInstance()));
 		});
 		builder.setEventHandler(PTaskEvent.Updated.class,
@@ -158,13 +158,13 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 			switch (cmd.getStatus()) {
 			case BACKLOG:
 				// We allow to change the state to BACKLOG when it was SCHEDULED
-				return ctx.thenPersist(new PTaskEvent.Backlogged(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Backlogged(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(evt.getStatus()));
 			case STARTED:
-				return ctx.thenPersist(new PTaskEvent.Started(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Started(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
 			case COMPLETED:
-				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
 //			case ARCHIVED:
 //				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getStatus()),
@@ -207,7 +207,7 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 					&& task.getColor().equals(cmd.getColor())) {
 				return ctx.done();
 			}
-			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
+			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getId(), cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
 					evt -> ctx.reply(Done.getInstance()));
 		});
 		builder.setEventHandler(PTaskEvent.Updated.class,
@@ -224,14 +224,14 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 			switch (cmd.getStatus()) {
 			case BACKLOG:
 				// We allow to change the state to BACKLOG when it was STARTED
-				return ctx.thenPersist(new PTaskEvent.Backlogged(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Backlogged(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(evt.getStatus()));
 			case SCHEDULED:
 				// We allow to change the state to SCHEDULED when it was STARTED
-				return ctx.thenPersist(new PTaskEvent.Scheduled(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Scheduled(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
 			case COMPLETED:
-				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
 //			case ARCHIVED:
 //				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getStatus()),
@@ -274,7 +274,7 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 					&& task.getColor().equals(cmd.getColor())) {
 				return ctx.done();
 			}
-			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
+			return ctx.thenPersist(new PTaskEvent.Updated(cmd.getId(), cmd.getTitle(), cmd.getDetails(), cmd.getColor()),
 					evt -> ctx.reply(Done.getInstance()));
 		});
 		builder.setEventHandler(PTaskEvent.Updated.class,
@@ -295,7 +295,7 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 				ctx.invalidCommand("A task can't be set to a previous status when it already complete");
 				return ctx.done();
 			case ARCHIVED:
-				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getStatus()),
+				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
 			default:
 				ctx.commandFailed(new InvalidCommandException("Unexpected update status " + cmd.getStatus()));

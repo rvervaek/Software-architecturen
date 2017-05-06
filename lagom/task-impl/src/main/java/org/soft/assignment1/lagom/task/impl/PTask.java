@@ -7,10 +7,8 @@ import javax.annotation.concurrent.Immutable;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Immutable
-@JsonSerialize
 public class PTask {
 
 	private final UUID id;
@@ -18,10 +16,9 @@ public class PTask {
 	private final String details;
 	private final PTaskColor color;
 	private final PTaskStatus status;
-	private final String boardId;
+	private final UUID boardId;
 	
 	@Immutable
-	@JsonSerialize
 	public static final class PTaskColor {
 		
 		private final int red;
@@ -48,8 +45,7 @@ public class PTask {
 		}
 	}
 
-	@JsonCreator
-	public PTask(UUID id, String title, String details, PTaskColor color, String boardId) {
+	public PTask(UUID id, String title, String details, PTaskColor color, UUID boardId) {
 		this.id = id;
 		this.title = title;
 		this.details = details;
@@ -58,8 +54,7 @@ public class PTask {
 		this.boardId = boardId;
 	}
 	
-	@JsonCreator
-	public PTask(UUID id, String title, String details, PTaskColor color, PTaskStatus status, String boardId) {
+	public PTask(UUID id, String title, String details, PTaskColor color, PTaskStatus status, UUID boardId) {
 		this.id = id;
 		this.title = title;
 		this.details = details;
@@ -88,7 +83,7 @@ public class PTask {
 		return status;
 	}
 
-	public String getBoardId() {
+	public UUID getBoardId() {
 		return boardId;
 	}
 	
@@ -109,6 +104,11 @@ public class PTask {
 				boardId);
 	}
 
+	/**
+	 * Update the task with a new status.
+	 * @param status
+	 * @return
+	 */
 	public PTask updateStatus(PTaskStatus status) {
 		return new PTask(
 				id, 

@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.api.transport.NotFound;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
+import com.lightbend.lagom.javadsl.persistence.ReadSide;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import akka.NotUsed;
@@ -31,11 +32,12 @@ public class TaskServiceImpl implements TaskService {
 	private final CassandraSession database;
 	
 	@Inject
-	public TaskServiceImpl(PersistentEntityRegistry persistentEntityRegistry, CassandraSession database, BoardService boardService) {
+	public TaskServiceImpl(PersistentEntityRegistry persistentEntityRegistry, ReadSide readSide, CassandraSession database, BoardService boardService) {
 		this.persistentEntityRegistry = persistentEntityRegistry;
 		this.database = database;
 		this.boardService = boardService;
 		persistentEntityRegistry.register(PTaskEntity.class);
+		readSide.register(PTaskEventProcessor.class);
 	}
 
 	@Override
@@ -76,7 +78,7 @@ public class TaskServiceImpl implements TaskService {
 		return task -> {
 			return persistentEntityRegistry
 					.refFor(PTaskEntity.class, id.toString())
-					.ask(new PTaskCommand.Update(Mappers.fromApi(task)))
+					.ask(new PTaskCommand.Update(id, Mappers.fromApi(task)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}
@@ -86,20 +88,20 @@ public class TaskServiceImpl implements TaskService {
 		return status -> {
 			return persistentEntityRegistry
 					.refFor(PTaskEntity.class, id.toString())
-					.ask(new PTaskCommand.UpdateStatus(PTaskStatus.get(status)))
+					.ask(new PTaskCommand.UpdateStatus(id, PTaskStatus.get(status)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}
 
 	@Override
-	public ServiceCall<NotUsed, PSequence<Task>> getByBoardId(String boardId) {
+	public ServiceCall<NotUsed, PSequence<Task>> getByBoardId(UUID boardId) {
 		return request -> {
 		CompletionStage<PSequence<Task>> result = database.selectAll("SELECT * FROM task WHERE boardId = ?", boardId)
 				.thenApply(rows -> {
 					List<Task> tasks = rows
 							.stream()
 							.map(row -> new Task(
-									row.get("id", UUID.class), 
+									row.getUUID("id"), 
 									row.getString("title"), 
 									row.getString("details"), 
 									new Task.TaskColor(
@@ -107,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
 											row.getInt("green"),
 											row.getInt("blue")), 
 									row.get("status", TaskStatus.class), 
-									row.getString("boardId")))
+									row.getUUID("boardId")))
 							.collect(Collectors.toList());
 					return TreePVector.from(tasks);
 				});
