@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
+import javax.inject.Inject;
+
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
 import org.soft.assignment1.lagom.board.api.BoardStatus;
@@ -13,7 +15,6 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
-import com.google.inject.Inject;
 import com.lightbend.lagom.javadsl.persistence.AggregateEventTag;
 import com.lightbend.lagom.javadsl.persistence.ReadSideProcessor;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraReadSide;
@@ -26,10 +27,10 @@ public class PBoardEventProcessor extends ReadSideProcessor<PBoardEvent> {
 	private final CassandraSession session;
 	private final CassandraReadSide readSide;
 	
-	private PreparedStatement insertBoardStatement;
+	private PreparedStatement insertBoardStatement = null;
 	
-	private PreparedStatement updateBoardStatement;
-	private PreparedStatement updateBoardStatusStatement;
+	private PreparedStatement updateBoardStatement = null;
+	private PreparedStatement updateBoardStatusStatement = null;
 		
 	@Inject
 	public PBoardEventProcessor(CassandraSession session, CassandraReadSide readSide) {

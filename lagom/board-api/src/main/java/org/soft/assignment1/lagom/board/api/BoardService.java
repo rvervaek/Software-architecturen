@@ -13,7 +13,7 @@ import com.lightbend.lagom.javadsl.api.transport.Method;
 import akka.NotUsed;
 
 public interface BoardService extends Service {
-
+	
 	public static final String SERVICE_NAME = "boardservice";
 	public static final String SERVICE_URI = "/api/board/";
 	
@@ -50,10 +50,6 @@ public interface BoardService extends Service {
 	 */
 	ServiceCall<NotUsed, PSequence<Board>> getAll();
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.lightbend.lagom.javadsl.api.Service#descriptor()
-	 */
 	@Override
 	default Descriptor descriptor() {
 		return Service.named(SERVICE_NAME)

@@ -5,6 +5,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
 import org.soft.assignment1.lagom.board.api.Board;
@@ -12,7 +14,6 @@ import org.soft.assignment1.lagom.board.api.BoardService;
 import org.soft.assignment1.lagom.board.api.BoardStatus;
 
 import com.datastax.driver.core.utils.UUIDs;
-import com.google.inject.Inject;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
 import com.lightbend.lagom.javadsl.persistence.ReadSide;
@@ -24,14 +25,13 @@ public class BoardServiceImpl implements BoardService {
 
 	private final PersistentEntityRegistry persistentEntityRegistry;
 	private final CassandraSession database;
-
+	
 	@Inject
-	public BoardServiceImpl(PersistentEntityRegistry persistentEntityRegistry, ReadSide readSide, CassandraSession database) {
+	public BoardServiceImpl(PersistentEntityRegistry persistentEntityRegistry, CassandraSession database, ReadSide readSide) {
 		this.persistentEntityRegistry = persistentEntityRegistry;
 		this.database = database;
 		persistentEntityRegistry.register(PBoardEntity.class);
-		readSide.register(PBoardEventProcessor.class);
-		
+		readSide.register(PBoardEventProcessor.class);	
 	}
 
 	@Override

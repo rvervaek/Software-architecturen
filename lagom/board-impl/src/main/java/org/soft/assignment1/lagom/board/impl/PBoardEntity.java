@@ -24,7 +24,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
         }
 	}
 
-	private PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior empty() {
+	protected PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior empty() {
 
 		BehaviorBuilder builder = newBehaviorBuilder(PBoardState.empty());
 
@@ -46,7 +46,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 		return builder.build();
 	}
 
-	private PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior created(PBoardState state) {
+	protected PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior created(PBoardState state) {
 		
 		BehaviorBuilder builder = newBehaviorBuilder(state);
 		
@@ -89,7 +89,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
         return builder.build();
 	}
 
-	private PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior archived(PBoardState state) {
+	protected PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior archived(PBoardState state) {
 		
 		BehaviorBuilder builder = newBehaviorBuilder(state);
 
@@ -135,74 +135,4 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 
         return builder.build();
 	}
-
-
-//	BehaviorBuilder b = newBehaviorBuilder(snapshotState.orElse(new PBoardState(Optional.empty())));
-//	
-//	/*
-//	 * Define command handlers.
-//	 */
-//	
-//	b.setCommandHandler(PBoardCommand.Create.class, (cmd, ctx) -> {
-//		// If the board is already defined
-//		if (state().board.isPresent()) {
-//			ctx.invalidCommand("Board " + entityId() + " is already created");
-//			return ctx.done();
-//		}
-//		
-//		// Persist the new board by creating a BoardCreated event
-//		return ctx.thenPersist(new PBoardEvent.BoardCreated(cmd.board.title), evt -> ctx.reply(Done.getInstance()));
-//	});
-//	
-//	b.setCommandHandler(PBoardCommand.Update.class, (cmd, ctx) -> {
-//		// If the board was not found
-//		if (!state().board.isPresent()) {
-//			ctx.invalidCommand("Board " + entityId() + " does not exists");
-//			return ctx.done();
-//		} 
-//		
-//		PBoard board = state().board.get();
-//		
-//		// If the status of the board is ARCHIVED, don't allow the update
-////		if (board.status == PBoardStatus.ARCHIVED) {
-////			ctx.invalidCommand("Board " + entityId() + " is already archived, can't change the board");
-////			return ctx.done();
-////		}
-//		
-//		// Don't update the board if the new title is the same as the current title
-////		if (board.title.equals(cmd.title)) {
-////			return ctx.done();
-////		}
-//		
-//		// Persist the update of the board by creating a BoardUpdated event
-//		return ctx.thenPersist(new PBoardEvent.BoardUpdated(cmd.title), evt -> ctx.reply(Done.getInstance()));
-//	});
-//	
-//	b.setCommandHandler(PBoardCommand.UpdateStatus.class, (cmd, ctx) -> {
-//		// If the board was not found
-//		if (!state().board.isPresent()) {
-//			ctx.invalidCommand("Board " + entityId() + " does not exists");
-//			return ctx.done();
-//		}
-//		
-//		// Persist the update of the board status by creating a BoardStatusUpdated event
-//		return ctx.thenPersist(new PBoardEvent.BoardStatusUpdated(cmd.status), evt -> ctx.reply(Done.getInstance()));
-//	});
-//	
-//	/*
-//	 * Define event handlers.
-//	 */
-//	
-//	b.setEventHandler(PBoardEvent.BoardCreated.class,
-//			evt -> new PBoardState(Optional.of(new PBoard(evt.title, PBoardStatus.CREATED))));
-//	
-//	b.setEventHandler(PBoardEvent.BoardUpdated.class,
-//			evt -> new PBoardState(Optional.of(new PBoard(evt.title, state().board.get().status))));
-//
-//	b.setEventHandler(PBoardEvent.BoardStatusUpdated.class,
-//			evt -> new PBoardState(Optional.of(new PBoard(state().board.get().title, evt.status))));
-//	
-//	
-//
-//	return b.build();
 }

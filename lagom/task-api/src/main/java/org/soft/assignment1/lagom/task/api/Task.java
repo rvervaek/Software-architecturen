@@ -13,12 +13,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonDeserialize
 public class Task {
 
-	private final UUID id;
-	private final String title;
-	private final String details;
-	private final TaskColor color;
-	private final TaskStatus status;
-	private final UUID boardId;
+	public final UUID id;
+	public final String title;
+	public final String details;
+	public final TaskColor color;
+	public final TaskStatus status;
+	public final UUID boardId;
 	
 	@JsonCreator
 	public Task(UUID id, String title, String details, TaskColor color, TaskStatus status, UUID boardId) {

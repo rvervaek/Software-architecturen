@@ -14,11 +14,11 @@
         <module>board-impl</module>
         <module>task-api</module>
         <module>task-impl</module>
-        <module>hello-api</module>
-        <module>hello-impl</module>
-        <module>stream-api</module>
-        <module>stream-impl</module>
-        <module>integration-tests</module>
+<!--         <module>hello-api</module> -->
+<!--         <module>hello-impl</module> -->
+<!--         <module>stream-api</module> -->
+<!--         <module>stream-impl</module> -->
+<!--         <module>integration-tests</module> -->
         <module>cassandra-config</module>
     </modules>
 
@@ -122,6 +122,11 @@
                 <artifactId>akka-stream_2.11</artifactId>
                 <version>${akka.version}</version>
             </dependency>
+            <dependency>
+			    <groupId>org.projectlombok</groupId>
+			    <artifactId>lombok</artifactId>
+			    <version>1.16.12</version>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 

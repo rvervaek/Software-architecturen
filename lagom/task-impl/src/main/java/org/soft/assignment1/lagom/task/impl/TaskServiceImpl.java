@@ -5,6 +5,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
 import org.soft.assignment1.lagom.board.api.Board;
@@ -15,7 +18,6 @@ import org.soft.assignment1.lagom.task.api.TaskService;
 import org.soft.assignment1.lagom.task.api.TaskStatus;
 
 import com.datastax.driver.core.utils.UUIDs;
-import com.google.inject.Inject;
 import com.lightbend.lagom.javadsl.api.ServiceCall;
 import com.lightbend.lagom.javadsl.api.transport.NotFound;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntityRegistry;
@@ -24,6 +26,7 @@ import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import akka.NotUsed;
 
+@Singleton
 public class TaskServiceImpl implements TaskService {
 
 	private final BoardService boardService;

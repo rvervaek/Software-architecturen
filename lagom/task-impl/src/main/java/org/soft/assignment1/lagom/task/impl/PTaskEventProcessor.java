@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 
+import javax.inject.Inject;
+
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
 import org.soft.assignment1.lagom.task.api.TaskStatus;
@@ -14,7 +16,6 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TypeCodec;
 import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
-import com.google.inject.Inject;
 import com.lightbend.lagom.javadsl.persistence.AggregateEventTag;
 import com.lightbend.lagom.javadsl.persistence.ReadSideProcessor;
 import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraReadSide;
@@ -27,10 +28,10 @@ public class PTaskEventProcessor extends ReadSideProcessor<PTaskEvent> {
 	private final CassandraSession session;
 	private final CassandraReadSide readSide;
 	
-	private PreparedStatement insertTaskStatement;
+	private PreparedStatement insertTaskStatement = null;
 	
-	private PreparedStatement updateTaskStatement;
-	private PreparedStatement updateTaskStatusStatement;
+	private PreparedStatement updateTaskStatement = null;
+	private PreparedStatement updateTaskStatusStatement = null;
 	
 	@Inject
 	public PTaskEventProcessor(CassandraSession session, CassandraReadSide readSide) {

@@ -3,8 +3,10 @@ package org.soft.assignment1.lagom.task.api;
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Immutable
+@JsonSerialize
 @JsonDeserialize
 public enum TaskStatus {
 

@@ -4,9 +4,6 @@ import java.util.UUID;
 
 import javax.annotation.concurrent.Immutable;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Preconditions;
 
 @Immutable

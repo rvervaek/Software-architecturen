@@ -14,9 +14,9 @@ import com.google.common.base.Preconditions;
 @JsonDeserialize
 public class Board {
 
-	private final UUID id;
-	private final String title;
-	private final BoardStatus status;	
+	UUID id;
+	String title;
+	BoardStatus status;	
 	
 	@JsonCreator
 	public Board(UUID id, String title, String status) {
