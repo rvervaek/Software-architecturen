@@ -17,22 +17,10 @@ import com.lightbend.lagom.javadsl.testkit.ServiceTest.TestServer;
 
 public class BoardServiceTest {
 
-	private static final String SERVICE_LOCATOR_URI = "http://localhost:8000";
-
-//	private static LagomClientFactory clientFactory;
-//	private static BoardService boardService;
-	
 	private static TestServer server;
 
 	@BeforeClass
 	public static void setup() {
-//		clientFactory = LagomClientFactory.create("integration-test", BoardServiceTest.class.getClassLoader());
-		// One of the clients can use the service locator, the other can use the
-		// service gateway, to test them both.
-
-//		boardService = clientFactory.createDevClient(BoardService.class, URI.create(SERVICE_LOCATOR_URI));
-		
-		
 		server = ServiceTest.startServer(defaultSetup().withCluster(false));
 	}
 	
@@ -42,17 +30,13 @@ public class BoardServiceTest {
 			server.stop();
 			server = null;
 		}
-//		if (clientFactory != null) {
-//			clientFactory.close();
-//		}
 	}
 	
 	@Test
-	public void testCreate() throws Exception {	
-//		withServer(defaultSetup(), server -> {		
-			BoardService service = server.client(BoardService.class);		
-			service.create().invoke(new Board(null, "test", BoardStatus.CREATED)).toCompletableFuture().get(5, TimeUnit.SECONDS);		
-//		});	
+	public void testCreate() throws Exception {
+		BoardService service = server.client(BoardService.class);
+		service.create().invoke(new Board(null, "test", BoardStatus.CREATED)).toCompletableFuture().get(5,
+				TimeUnit.SECONDS);
 	}
 	
 }

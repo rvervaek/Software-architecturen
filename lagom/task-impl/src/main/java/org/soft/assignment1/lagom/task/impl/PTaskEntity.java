@@ -100,9 +100,6 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 			case COMPLETED:
 				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
-//			case ARCHIVED:
-//				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getStatus()),
-//						evt -> state().updateStatus(cmd.getStatus()));
 			default:
 				ctx.commandFailed(new InvalidCommandException("Unexpected update status " + cmd.getStatus()));
 				return ctx.done();
@@ -114,8 +111,6 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 				evt -> started(state().updateStatus(evt.getStatus())));
 		builder.setEventHandlerChangingBehavior(PTaskEvent.Completed.class,
 				evt -> completed(state().updateStatus(evt.getStatus())));
-//		builder.setEventHandlerChangingBehavior(PTaskEvent.Archived.class,
-//				evt -> archived(state().updateStatus(evt.getStatus())));
 
 		return builder.build();
 	}
@@ -166,9 +161,6 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 			case COMPLETED:
 				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
-//			case ARCHIVED:
-//				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getStatus()),
-//						evt -> state().updateStatus(cmd.getStatus()));
 			default:
 				ctx.commandFailed(new InvalidCommandException("Unexpected update status " + cmd.getStatus()));
 				return ctx.done();
@@ -180,8 +172,6 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 				evt -> started(state().updateStatus(evt.getStatus())));
 		builder.setEventHandlerChangingBehavior(PTaskEvent.Completed.class,
 				evt -> completed(state().updateStatus(evt.getStatus())));
-//		builder.setEventHandlerChangingBehavior(PTaskEvent.Archived.class,
-//				evt -> archived(state().updateStatus(evt.getStatus())));
 		
 		return builder.build();
 	}
@@ -233,9 +223,6 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 			case COMPLETED:
 				return ctx.thenPersist(new PTaskEvent.Completed(cmd.getId(), cmd.getStatus()),
 						evt -> state().updateStatus(cmd.getStatus()));
-//			case ARCHIVED:
-//				return ctx.thenPersist(new PTaskEvent.Archived(cmd.getStatus()),
-//						evt -> state().updateStatus(cmd.getStatus()));
 			default:
 				ctx.commandFailed(new InvalidCommandException("Unexpected update status " + cmd.getStatus()));
 				return ctx.done();
@@ -247,8 +234,6 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 				evt -> scheduled(state().updateStatus(evt.getStatus())));
 		builder.setEventHandlerChangingBehavior(PTaskEvent.Completed.class,
 				evt -> completed(state().updateStatus(evt.getStatus())));
-//		builder.setEventHandlerChangingBehavior(PTaskEvent.Archived.class,
-//				evt -> archived(state().updateStatus(evt.getStatus())));
 		
 		return builder.build();
 	}
@@ -308,11 +293,27 @@ public class PTaskEntity extends PersistentEntity<PTaskCommand, PTaskEvent, PTas
 		return builder.build();
 	}
 
-	private PersistentEntity<PTaskCommand, PTaskEvent, PTaskState>.Behavior archived(PTaskState pTaskState) {
-		// TODO Auto-generated method stub
-		return null;
+	private PersistentEntity<PTaskCommand, PTaskEvent, PTaskState>.Behavior archived(PTaskState state) {
+		
+		BehaviorBuilder builder = newBehaviorBuilder(state);
+		
+		/* CREATE */
+		builder.setReadOnlyCommandHandler(PTaskCommand.Create.class, (cmd, ctx) -> ctx
+				.commandFailed(new InvalidCommandException("Create not valid in state " + state().getStatus())));
+		
+		/* GET */
+		builder.setReadOnlyCommandHandler(PTaskCommand.Get.class,
+				(cmd, ctx) -> ctx.reply(Mappers.toApi(state().getTask().get())));
+		
+		/* UPDATE */
+		builder.setReadOnlyCommandHandler(PTaskCommand.Update.class, (cmd, ctx) -> ctx
+				.commandFailed(new InvalidCommandException("Update not valid in state " + state().getStatus())));
+
+		/* UPDATESTATUS */
+		builder.setReadOnlyCommandHandler(PTaskCommand.UpdateStatus.class, (cmd, ctx) -> ctx
+				.commandFailed(new InvalidCommandException("Update status not valid in state " + state().getStatus())));
+
+		return builder.build();
 	}
 
-
-	
 }

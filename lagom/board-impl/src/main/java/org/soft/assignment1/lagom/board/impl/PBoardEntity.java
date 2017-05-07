@@ -18,10 +18,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 		} else {
 			System.out.println("Snapshotstate not present");
 		}
-		
-		System.out.println("PBoardEntity.initialBehavior: status " + status);
-		System.out.println("PBoardEntity.initialBehavior: board " + (snapshotState.isPresent() ? snapshotState.get().getBoard() : null));
-		
+
         switch (status) {
             case NOT_CREATED:
                 return empty();
@@ -57,9 +54,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 	}
 
 	protected PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior created(PBoardState state) {
-		
-		System.out.println(state.getBoard());
-		
+				
 		BehaviorBuilder builder = newBehaviorBuilder(state);
 		
 		/* CREATE */

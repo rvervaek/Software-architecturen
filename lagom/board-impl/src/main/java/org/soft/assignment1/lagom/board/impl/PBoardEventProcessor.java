@@ -111,17 +111,14 @@ public class PBoardEventProcessor extends ReadSideProcessor<PBoardEvent> {
 	}
 	
 	private CompletionStage<List<BoundStatement>> insertBoard(PBoard board) {
-		System.out.println("Inserting board " + board);
 		return CassandraReadSide.completedStatement(insertBoardStatement.bind(board.getId(), board.getTitle(), board.getStatus()));
 	}
 
 	private CompletionStage<List<BoundStatement>> updateBoard(UUID id, String title) {
-		System.out.println("Updating board " + id + " to title " + title);
 		return CassandraReadSide.completedStatement(updateBoardStatement.bind(title, id));
 	}
 	
 	private CompletionStage<List<BoundStatement>> updateBoardStatus(UUID id, PBoardStatus status) {
-		System.out.println("Updating board " + id + " to status " + status);
 		return CassandraReadSide.completedStatement(updateBoardStatusStatement.bind(status, id));
 	}
 
