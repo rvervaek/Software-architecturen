@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
-import org.soft.assignment1.lagom.board.api.BoardStatus;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
@@ -79,7 +78,7 @@ public class PBoardEventProcessor extends ReadSideProcessor<PBoardEvent> {
 	private CompletionStage<Done> prepareStatements() {
 		return session
 				.underlying()
-				.thenAccept(s -> registerCodec(s, new EnumNameCodec<>(BoardStatus.class)))
+				.thenAccept(s -> registerCodec(s, new EnumNameCodec<>(PBoardStatus.class)))
 				.thenCombine(prepareInsertBoardStatement(), (c1, c2) -> Done.getInstance())
 				.thenCombine(prepareUpdateBoardStatement(), (c1, c2) -> Done.getInstance())
 				.thenCombine(prepareUpdateBoardStatusStatement(), (c1, c2) -> Done.getInstance())
@@ -106,20 +105,23 @@ public class PBoardEventProcessor extends ReadSideProcessor<PBoardEvent> {
 		return session
 				.prepare("UPDATE board set status = ? where boardId = ?")
 				.thenApply(ps -> {
-					setUpdateBoardStatement(ps);
+					setUpdateBoardStatusStatement(ps);
 					return Done.getInstance();
 				});
 	}
 	
 	private CompletionStage<List<BoundStatement>> insertBoard(PBoard board) {
+		System.out.println("Inserting board " + board);
 		return CassandraReadSide.completedStatement(insertBoardStatement.bind(board.getId(), board.getTitle(), board.getStatus()));
 	}
 
 	private CompletionStage<List<BoundStatement>> updateBoard(UUID id, String title) {
+		System.out.println("Updating board " + id + " to title " + title);
 		return CassandraReadSide.completedStatement(updateBoardStatement.bind(title, id));
 	}
 	
 	private CompletionStage<List<BoundStatement>> updateBoardStatus(UUID id, PBoardStatus status) {
+		System.out.println("Updating board " + id + " to status " + status);
 		return CassandraReadSide.completedStatement(updateBoardStatusStatement.bind(status, id));
 	}
 

@@ -4,9 +4,12 @@ import javax.annotation.concurrent.Immutable;
 
 import org.soft.assignment1.lagom.task.api.TaskStatus;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Immutable
+@JsonSerialize
 @JsonDeserialize
 public enum PTaskStatus {
 
@@ -49,6 +52,7 @@ public enum PTaskStatus {
 	
 	abstract TaskStatus toTaskStatus();
 	
+	@JsonCreator
 	public static PTaskStatus get(TaskStatus status) {
 		switch(status) {
 		case BACKLOG: return PTaskStatus.BACKLOG;

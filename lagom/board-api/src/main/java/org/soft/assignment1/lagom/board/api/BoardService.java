@@ -15,7 +15,7 @@ import akka.NotUsed;
 public interface BoardService extends Service {
 	
 	public static final String SERVICE_NAME = "boardservice";
-	public static final String SERVICE_URI = "/api/board/";
+	public static final String SERVICE_URI = "/api/board";
 	
 	/**
 	 * Create a new board.
@@ -55,11 +55,12 @@ public interface BoardService extends Service {
 		return Service.named(SERVICE_NAME)
 				.withCalls(
 						Service.restCall(Method.POST, SERVICE_URI, this::create),
-						Service.restCall(Method.PUT, SERVICE_URI + ":title", this::update),
-						Service.restCall(Method.PUT, SERVICE_URI + ":title/status", this::updateStatus),
-						Service.restCall(Method.GET, SERVICE_URI + ":title", this::get),
+						Service.restCall(Method.PUT, SERVICE_URI + "/:id", this::update),
+						Service.restCall(Method.PUT, SERVICE_URI + "/:id/status", this::updateStatus),
+						Service.restCall(Method.GET, SERVICE_URI + "/:id", this::get),
 						Service.restCall(Method.GET, SERVICE_URI, this::getAll))
 				.withAutoAcl(true)
-				.withPathParamSerializer(UUID.class, PathParamSerializers.UUID);
+				.withPathParamSerializer(UUID.class, PathParamSerializers.UUID)
+				.withPathParamSerializer(BoardStatus.class, PathParamSerializers.required("status", BoardStatus::get, BoardStatus::name));
 	}
 }

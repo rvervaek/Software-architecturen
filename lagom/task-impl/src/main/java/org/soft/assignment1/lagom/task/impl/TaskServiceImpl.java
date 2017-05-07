@@ -39,7 +39,7 @@ public class TaskServiceImpl implements TaskService {
 		this.persistentEntityRegistry = persistentEntityRegistry;
 		this.database = database;
 		this.boardService = boardService;
-		persistentEntityRegistry.register(PTaskEntity.class);
+		this.persistentEntityRegistry.register(PTaskEntity.class);
 		readSide.register(PTaskEventProcessor.class);
 	}
 
@@ -60,9 +60,10 @@ public class TaskServiceImpl implements TaskService {
 				throw new IllegalStateException("Board " + task.getBoardId() + " was already archived");
 			}
 			/* Persist the new task */
+			UUID id = UUIDs.timeBased();
 			return persistentEntityRegistry
-					.refFor(PTaskEntity.class, UUIDs.timeBased().toString())
-					.ask(new PTaskCommand.Create(Mappers.fromApi(task)))
+					.refFor(PTaskEntity.class, id.toString())
+					.ask(new PTaskCommand.Create(Mappers.fromApi(id, task)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}

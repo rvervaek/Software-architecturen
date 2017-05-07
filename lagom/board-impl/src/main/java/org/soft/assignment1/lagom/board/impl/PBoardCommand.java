@@ -7,6 +7,7 @@ import javax.annotation.concurrent.Immutable;
 import org.soft.assignment1.lagom.board.api.Board;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 import com.lightbend.lagom.serialization.Jsonable;
@@ -59,7 +60,7 @@ public interface PBoardCommand extends Jsonable {
 		private final String title;
 		
 		@JsonCreator
-		public Update(UUID id, String title) {
+		public Update(@JsonProperty("id") UUID id, @JsonProperty("title") String title) {
 			this.id = id;
 			this.title = title;
 		}
@@ -83,7 +84,7 @@ public interface PBoardCommand extends Jsonable {
 		private final PBoardStatus status;
 		
 		@JsonCreator
-		public UpdateStatus(UUID id, PBoardStatus status) {
+		public UpdateStatus(@JsonProperty("id") UUID id, @JsonProperty("status") PBoardStatus status) {
 			this.id = id;
 			this.status = status;
 		}

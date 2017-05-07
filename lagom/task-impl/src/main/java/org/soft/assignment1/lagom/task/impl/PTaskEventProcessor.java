@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
-import org.soft.assignment1.lagom.task.api.TaskStatus;
 import org.soft.assignment1.lagom.task.impl.PTask.PTaskColor;
 
 import com.datastax.driver.core.BoundStatement;
@@ -83,7 +82,7 @@ public class PTaskEventProcessor extends ReadSideProcessor<PTaskEvent> {
 	private CompletionStage<Done> prepareStatements() {
 		return session
 				.underlying()
-				.thenAccept(s -> registerCodec(s, new EnumNameCodec<>(TaskStatus.class)))
+				.thenAccept(s -> registerCodec(s, new EnumNameCodec<>(PTaskStatus.class)))
 				.thenCombine(prepareInsertTaskStatement(), (c1, c2) -> Done.getInstance())
 				.thenCombine(prepareUpdateTaskStatement(), (c1, c2) -> Done.getInstance())
 				.thenCombine(prepareUpdateTaskStatusStatement(), (c1, c2) -> Done.getInstance())
@@ -94,7 +93,7 @@ public class PTaskEventProcessor extends ReadSideProcessor<PTaskEvent> {
 		return session
 				.prepare("UPDATE task SET title = ?, details = ?, red = ?, green = ?, blue = ? WHERE taskId = ?")
 				.thenApply(ps -> {
-					setUpdateTaskStatement(ps);
+					setUpdateTaskStatusStatement(ps);
 					return Done.getInstance();
 				});
 	}

@@ -7,8 +7,13 @@ import javax.annotation.concurrent.Immutable;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Immutable
+@JsonSerialize
+@JsonDeserialize
 public class PTask {
 
 	private final UUID id;
@@ -19,6 +24,8 @@ public class PTask {
 	private final UUID boardId;
 	
 	@Immutable
+	@JsonSerialize
+	@JsonDeserialize
 	public static final class PTaskColor {
 		
 		private final int red;
@@ -26,7 +33,7 @@ public class PTask {
 		private final int blue;
 		
 		@JsonCreator
-		public PTaskColor(int red, int green, int blue) {
+		public PTaskColor(@JsonProperty("red") int red, @JsonProperty("green") int green, @JsonProperty("blue") int blue) {
 			this.red = red;
 			this.green = green;
 			this.blue = blue;
@@ -54,7 +61,8 @@ public class PTask {
 		this.boardId = boardId;
 	}
 	
-	public PTask(UUID id, String title, String details, PTaskColor color, PTaskStatus status, UUID boardId) {
+	@JsonCreator
+	public PTask(@JsonProperty("id") UUID id, @JsonProperty("title") String title, @JsonProperty("details") String details, @JsonProperty("color") PTaskColor color, @JsonProperty("status") PTaskStatus status, @JsonProperty("boardId") UUID boardId) {
 		this.id = id;
 		this.title = title;
 		this.details = details;

@@ -14,6 +14,16 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>board-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>task-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 <!--         <dependency> -->
 <!--             <groupId>${project.groupId}</groupId> -->
 <!--             <artifactId>hello-api</artifactId> -->
@@ -33,6 +43,11 @@
             <groupId>com.lightbend.lagom</groupId>
             <artifactId>lagom-logback_2.11</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>com.lightbend.lagom</groupId>
+        	<artifactId>lagom-javadsl-testkit_2.11</artifactId>
+        	<scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

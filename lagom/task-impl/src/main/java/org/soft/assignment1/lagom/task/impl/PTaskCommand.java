@@ -8,6 +8,7 @@ import org.soft.assignment1.lagom.task.api.Task;
 import org.soft.assignment1.lagom.task.impl.PTask.PTaskColor;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.lightbend.lagom.javadsl.persistence.PersistentEntity;
 import com.lightbend.lagom.serialization.Jsonable;
@@ -62,7 +63,7 @@ public interface PTaskCommand extends Jsonable {
 		private final PTaskColor color;
 		
 		@JsonCreator
-		public Update(UUID id, PTask task) {
+		public Update(@JsonProperty("id") UUID id, @JsonProperty("task") PTask task) {
 			this.id = id;
 			this.title = task.getTitle();
 			this.details = task.getDetails();
@@ -96,7 +97,7 @@ public interface PTaskCommand extends Jsonable {
 		public final PTaskStatus status;
 		
 		@JsonCreator
-		public UpdateStatus(UUID id, PTaskStatus status) {
+		public UpdateStatus(@JsonProperty("id") UUID id, @JsonProperty("status") PTaskStatus status) {
 			this.id = id;
 			this.status = status;
 		}

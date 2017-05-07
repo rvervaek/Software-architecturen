@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -21,7 +22,7 @@ public class Task {
 	public final UUID boardId;
 	
 	@JsonCreator
-	public Task(UUID id, String title, String details, TaskColor color, TaskStatus status, UUID boardId) {
+	public Task(@JsonProperty("id") UUID id, @JsonProperty("title") String title, @JsonProperty("details") String details, @JsonProperty("color") TaskColor color, @JsonProperty("status") TaskStatus status, @JsonProperty("boardId") UUID boardId) {
 		this.id = id;
 		this.title = title;
 		this.details = details;
@@ -40,7 +41,7 @@ public class Task {
 		private final int blue;
 		
 		@JsonCreator
-		public TaskColor(int red, int green, int blue) {
+		public TaskColor(@JsonProperty("red") int red, @JsonProperty("green") int green, @JsonProperty("blue") int blue) {
 			this.red = red;
 			this.green = green;
 			this.blue = blue;

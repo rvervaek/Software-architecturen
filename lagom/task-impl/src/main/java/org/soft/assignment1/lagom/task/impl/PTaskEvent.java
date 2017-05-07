@@ -7,6 +7,7 @@ import javax.annotation.concurrent.Immutable;
 import org.soft.assignment1.lagom.task.impl.PTask.PTaskColor;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import com.lightbend.lagom.javadsl.persistence.AggregateEvent;
@@ -47,7 +48,7 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 		private final PTaskStatus status;
 
 		@JsonCreator
-		public Backlogged(UUID id, PTaskStatus status) {
+		public Backlogged(@JsonProperty("id") UUID id, @JsonProperty("status") PTaskStatus status) {
 			assert status == PTaskStatus.BACKLOG;
 			this.id = id;
 			this.status = status;
@@ -74,7 +75,7 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 		private final PTaskColor color;
 
 		@JsonCreator
-		public Updated(UUID id, String title, String details, PTaskColor color) {
+		public Updated(@JsonProperty("id") UUID id, @JsonProperty("title") String title, @JsonProperty("details") String details, @JsonProperty("color") PTaskColor color) {
 			this.id = id;
 			this.title = title;
 			this.details = details;
@@ -108,7 +109,7 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 		private final PTaskStatus status;
 
 		@JsonCreator
-		public Scheduled(UUID id, PTaskStatus status) {
+		public Scheduled(@JsonProperty("id") UUID id, @JsonProperty("status") PTaskStatus status) {
 			assert status == PTaskStatus.SCHEDULED;
 			this.id = id;
 			this.status = status;
@@ -133,7 +134,7 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 		private final PTaskStatus status;
 
 		@JsonCreator
-		public Started(UUID id, PTaskStatus status) {
+		public Started(@JsonProperty("id") UUID id, @JsonProperty("status") PTaskStatus status) {
 			assert status == PTaskStatus.STARTED;
 			this.id = id;
 			this.status = status;
@@ -158,7 +159,7 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 		private final PTaskStatus status;
 
 		@JsonCreator
-		public Completed(UUID id, PTaskStatus status) {
+		public Completed(@JsonProperty("id") UUID id, @JsonProperty("status") PTaskStatus status) {
 			assert status == PTaskStatus.COMPLETED;
 			this.id = id;
 			this.status = status;
@@ -183,7 +184,7 @@ public interface PTaskEvent extends Jsonable, AggregateEvent<PTaskEvent> {
 		private final PTaskStatus status;
 
 		@JsonCreator
-		public Archived(UUID id, PTaskStatus status) {
+		public Archived(@JsonProperty("id") UUID id, @JsonProperty("status") PTaskStatus status) {
 			assert status == PTaskStatus.ARCHIVED;
 			this.id = id;
 			this.status = status;

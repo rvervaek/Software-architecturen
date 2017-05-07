@@ -5,29 +5,34 @@ import java.util.UUID;
 import javax.annotation.concurrent.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.base.Preconditions;
 
 @Immutable
 @JsonSerialize
 @JsonDeserialize
 public class Board {
 
-	UUID id;
-	String title;
-	BoardStatus status;	
+	private final UUID id;
+	private final String title;
+	private final BoardStatus status;	
 	
-	@JsonCreator
 	public Board(UUID id, String title, String status) {
 		this(id, title, BoardStatus.get(status));
 	}
 	
+	/**
+	 * Constructor for changing board status.
+	 * @param id
+	 * @param status
+	 */
 	@JsonCreator
-	public Board(UUID id, String title, BoardStatus status) {
-		this.id = Preconditions.checkNotNull(id);
-		this.title = Preconditions.checkNotNull(title);
-		this.status = Preconditions.checkNotNull(status);
+	public Board(@JsonProperty("id") UUID id, @JsonProperty("title") String title, @JsonProperty("status") BoardStatus status) {
+		this.id = id;
+		this.title = title;
+		this.status = status;
+		System.out.println("Created board: " + toString());
 	}
 
 	public UUID getId() {
@@ -69,6 +74,6 @@ public class Board {
 
 	@Override
 	public String toString() {
-		return "Board [title=" + title + "]";
+		return "Board [id=" + id + ", title=" + title + ", status=" + status + "]";
 	}
 }

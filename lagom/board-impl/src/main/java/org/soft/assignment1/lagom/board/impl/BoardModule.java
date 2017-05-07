@@ -1,5 +1,6 @@
 package org.soft.assignment1.lagom.board.impl;
 
+
 import org.soft.assignment1.lagom.board.api.BoardService;
 
 import com.google.inject.AbstractModule;

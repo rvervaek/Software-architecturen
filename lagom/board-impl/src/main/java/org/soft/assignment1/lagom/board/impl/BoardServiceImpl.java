@@ -6,6 +6,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.pcollections.PSequence;
 import org.pcollections.TreePVector;
@@ -21,6 +22,7 @@ import com.lightbend.lagom.javadsl.persistence.cassandra.CassandraSession;
 
 import akka.NotUsed;
 
+@Singleton
 public class BoardServiceImpl implements BoardService {
 
 	private final PersistentEntityRegistry persistentEntityRegistry;
@@ -30,16 +32,18 @@ public class BoardServiceImpl implements BoardService {
 	public BoardServiceImpl(PersistentEntityRegistry persistentEntityRegistry, CassandraSession database, ReadSide readSide) {
 		this.persistentEntityRegistry = persistentEntityRegistry;
 		this.database = database;
-		persistentEntityRegistry.register(PBoardEntity.class);
+		this.persistentEntityRegistry.register(PBoardEntity.class);
 		readSide.register(PBoardEventProcessor.class);	
 	}
 
 	@Override
 	public ServiceCall<Board, NotUsed> create() {
-		return board -> {	
+		return board -> {
+			// Create a new ID for the board
+			UUID id = UUIDs.timeBased();
 			return persistentEntityRegistry
-					.refFor(PBoardEntity.class, UUIDs.timeBased().toString())
-					.ask(new PBoardCommand.Create(Mappers.fromApi(board)))
+					.refFor(PBoardEntity.class, id.toString())
+					.ask(new PBoardCommand.Create(Mappers.fromApi(id, board)))
 					.thenApply(ack -> NotUsed.getInstance());
 		};
 	}

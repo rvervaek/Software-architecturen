@@ -38,8 +38,8 @@ public final class PBoardState implements Jsonable {
         return update(i -> i.updateStatus(id, status));
     }
     
-    public Optional<PBoard> getBoard() {
-		return board;
+    public PBoard getBoard() {
+		return board.get();
 	}
 
 	public PBoardStatus getStatus() {

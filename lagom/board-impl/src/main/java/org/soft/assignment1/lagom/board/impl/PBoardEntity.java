@@ -11,7 +11,17 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 	@Override
 	public PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior initialBehavior(Optional<PBoardState> snapshotState) {
 
-		PBoardStatus status = snapshotState.map(PBoardState::getStatus).orElse(PBoardStatus.NOT_CREATED);
+		PBoardStatus status = PBoardStatus.NOT_CREATED;
+		if (snapshotState.isPresent()) {
+			status = snapshotState.get().getStatus();
+			System.out.println("Snapshotstate present: " + snapshotState.get().getBoard());
+		} else {
+			System.out.println("Snapshotstate not present");
+		}
+		
+		System.out.println("PBoardEntity.initialBehavior: status " + status);
+		System.out.println("PBoardEntity.initialBehavior: board " + (snapshotState.isPresent() ? snapshotState.get().getBoard() : null));
+		
         switch (status) {
             case NOT_CREATED:
                 return empty();
@@ -48,6 +58,8 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 
 	protected PersistentEntity<PBoardCommand, PBoardEvent, PBoardState>.Behavior created(PBoardState state) {
 		
+		System.out.println(state.getBoard());
+		
 		BehaviorBuilder builder = newBehaviorBuilder(state);
 		
 		/* CREATE */
@@ -56,7 +68,7 @@ public class PBoardEntity extends PersistentEntity<PBoardCommand, PBoardEvent, P
 
 		/* UPDATE */
 		builder.setCommandHandler(PBoardCommand.Update.class, (cmd, ctx) -> {
-			PBoard board = state().getBoard().get();
+			PBoard board = state().getBoard();
 			// Don't emit event when not necessary
 			if (board.getTitle().equals(cmd.getTitle())) {
 				return ctx.done();
